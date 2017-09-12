@@ -3,24 +3,32 @@
 {% block extra_body %}
 <script>
 $(function() {
-    $('#page-2-btn').click(function() {
-        $.get('?page=2')
-            .done(function(html) {
-                console.log(html);
-                $('#post-list-wrapper').html(html);
+    var $win = $(window);
+    var is_loading = false;
 
-                var state_obj = {}; // pushState 후에 history.state로 접근 가능
-                var title = "";
-                var url = "?page=2"; // 이동할 URL
-                history.pushState(state_obj, title, url);
-            })
-            .fail(function() {
-                console.log('fail');
+    $win.scroll(function() {
+        var diff = $(document).height() - parseInt($win.height());
+        if ( (!is_loading) && (diff == $win.scrollTop()) ) {
+            console.log("바닥에 왔음.");
+
+        var search_params = new URLSearchParams(window.location.search); // 현재 페이지의 GET인자를 가공
+        var current_page = parseInt(search_params.get('page')) || 1;
+        var next_page_url = '?page=' + (current_page + 1);
+        is_loading = true;
+
+        $.get(next_page_url).
+            done(function(html) {
+                $('#post-list tbody').append(html);
+                history.pushState({}, '', next_page_url);
             }).
-            always(function() {
-                console.log('always');
+            fail(function(xhr, textStatus, error) {
+                console.log(textStatus);
+            })
+            .always(function() {
+                console.log("always");
+                is_loading = false;
             });
-        return false;
+        }
     });
 });
 </script>
@@ -29,8 +37,15 @@ $(function() {
 {% block content %}
     <div class="container">
         <div class="row">
-            <div class="col-sm-12" id="post-list-wrapper">
-                {% include "blog/_post_list.html" %}
+            <div class="col-sm-12">
+                <table class="table table-bordered table-hover" id="post-list">
+                    <tbody>
+                        {% include "blog/_post_list.html" %}
+                    </tbody>
+                </table>
+
+                <hr/>
+                <a href="{% url "blog:post_new" %}" class="btn btn-primary">새 글쓰기</a>
             </div>
         </div>
     </div>
