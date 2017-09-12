@@ -1,8 +1,10 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render, resolve_url
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
+from rest_framework.renderers import JSONRenderer
 from .models import Post, Comment
+from .serializers import PostSerializer
 
 
 class PostListView(ListView):
@@ -67,9 +69,8 @@ comment_delete = CommentDeleteView.as_view()
 def post_list_json(request):
     qs = Post.objects.all()
 
-    post_list = []
-    for post in qs:
-        post_list.append({'id': post.id, 'title': post.title, 'content': post.content})
+    serializer = PostSerializer(qs, many=True)
+    json_utf8_string = JSONRenderer().render(serializer.data)
 
-    return JsonResponse(post_list, safe=False)
+    return HttpResponse(json_utf8_string, content_type='application/json; charset=utf-8') # 커스텀 지정
 
