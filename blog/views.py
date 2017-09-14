@@ -1,5 +1,6 @@
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render, resolve_url
+from django.template.defaultfilters import truncatewords
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from rest_framework.renderers import JSONRenderer
@@ -20,7 +21,21 @@ index = PostListView.as_view()
 
 post_new = CreateView.as_view(model=Post, fields='__all__')
 
-post_detail = DetailView.as_view(model=Post)
+
+class PostDetailView(DetailView):
+    model = Post
+
+    def render_to_response(self, context):
+        if self.request.is_ajax():
+            return JsonResponse({
+                'title': self.object.title,
+                'summary': truncatewords(self.object.content, 100),
+            })
+        # 템플릿 렌더링
+        return super().render_to_response(context)
+
+post_detail = PostDetailView.as_view()
+
 
 post_edit = UpdateView.as_view(model=Post, fields='__all__')
 
