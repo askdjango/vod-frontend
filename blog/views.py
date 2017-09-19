@@ -85,8 +85,23 @@ class CommentUpdateView(UpdateView):
     model = Comment
     form_class = CommentForm
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        if self.request.is_ajax(): # render_to_response가 호출되지 않습니다.
+            return render(self.request, 'blog/_comment.html', {
+                'comment': self.object,
+            })
+
+        return response
+
     def get_success_url(self):
         return resolve_url(self.object.post)
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return ['blog/_comment_form.html']
+        return ['blog/comment_form.html']
 
 comment_edit = CommentUpdateView.as_view()
 

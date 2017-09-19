@@ -8,6 +8,7 @@ $(function() {
         e.preventDefault();
 
         var action_url = $(this).attr('href');
+        var target_id = $(this).data('target-id');
 
         $.get(action_url)
             .done(function(form_html) {
@@ -15,6 +16,17 @@ $(function() {
                 $modal.find('.modal-body').html(form_html);
                 $form = $modal.find('.modal-body form');
                 $form.attr('action', action_url);
+
+                if ( target_id ) {
+                    $form.attr('data-target-id', target_id); // modal form에 data-target-id를 기록
+                }
+                else {
+                    $form.removeData('target-id'); // modal창이 뜰때마다 form태그가 새로이 지정되어서 불필요
+                }
+
+                $modal.on('shown.bs.modal', function(e) {
+                    $(this).find('textarea:first').focus();
+                });
 
                 $modal.modal();
             })
@@ -39,6 +51,8 @@ $(function() {
         $.post(url, data)
             .done(function(html) {
                 var $resp = $(html);
+                var target_id = $form.data('target-id');
+
                 console.log(html);
 
                 if ( $resp.find('.has-error').length > 0 ) {
@@ -48,7 +62,13 @@ $(function() {
                     $('#comment-form-modal .modal-body form').html(fields_html);
                 }
                 else {
-                    $resp.prependTo('#comment-list');
+                    if ( target_id ) {
+                        $('#' + target_id).html($resp.html());
+                    }
+                    else {
+                        $resp.prependTo('#comment-list');
+                    }
+
                     $('#comment-form-modal').modal('hide');
                     $form[0].reset();
                 }
