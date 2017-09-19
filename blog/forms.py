@@ -6,7 +6,7 @@ from .models import Comment
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['message']
+        fields = ['message', 'photo']
 
     def clean_message(self):
         message = self.cleaned_data.get('message', None)
