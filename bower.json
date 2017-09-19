@@ -3,7 +3,8 @@
     "dependencies": {
         "jquery": "~3.2.1",
         "bootstrap": "~3.3.7",
-        "underscore": "~1.8.3"
+        "underscore": "~1.8.3",
+        "jquery-form": "~4.2.2"
     }
 }
 

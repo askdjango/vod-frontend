@@ -45,11 +45,10 @@ $(function() {
 
         $submit.prop('disabled', true);
 
-        var url = $form.attr('action');
-        var data = $form.serialize();  // url encoded된 데이터
+        $form.ajaxSubmit({
+            success: function(response, statusText, xhr, $form) {
+                var html = response;
 
-        $.post(url, data)
-            .done(function(html) {
                 var $resp = $(html);
                 var target_id = $form.data('target-id');
 
@@ -72,13 +71,13 @@ $(function() {
                     $('#comment-form-modal').modal('hide');
                     $form[0].reset();
                 }
-            })
-            .fail(function(xhr, textStatus, error) {
+            },
+            error: function(xhr, textStatus, error) {
                 alert('failed : ' + error);
-            })
-            .always(function() {
-                $submit.prop('disabled', false);
-            });
+            },
+            complete: function(xhr, textStatus) {
+            }
+        });
     });
 
 
