@@ -115,11 +115,11 @@ $(function() {
             <a href="{% url "blog:comment_new" post.pk %}"
                class="comment-form-btn btn btn-primary btn-block">댓글쓰기</a>
 
-            <ul id="comment-list">
-            {% for comment in post.comment_set.all %}
-                {% include "blog/_comment.html" %}
-            {% endfor %}
-            </ul>
+            <div id="comment-list">
+                {% for comment in post.comment_set.all %}
+                    {% include "blog/_comment.html" %}
+                {% endfor %}
+            </div>
 
             <hr/>
 
