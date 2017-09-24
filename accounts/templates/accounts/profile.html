@@ -1,0 +1,29 @@
+{% extends "accounts/layout.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>{{ user }}'s Profile</h2>
+
+            <table class="table table-hover table-bordered">
+                <tbody>
+                    <tr>
+                        <th>username</th>
+                        <td>{{ user.username }}</td>
+                    </tr>
+                    <tr>
+                        <th>last login</th>
+                        <td>{{ user.last_login }}</td>
+                    </tr>
+                    <tr>
+                        <th>date joined</th>
+                        <td>{{ user.date_joined }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
