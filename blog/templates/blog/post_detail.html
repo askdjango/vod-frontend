@@ -98,6 +98,14 @@ $(function() {
                 });
         }
     });
+
+    $.get('{% url "blog:comment_list" post.pk %}')
+        .done(function(html) {
+            $('#comment-list').html(html);
+        })
+        .fail(function(xhr, textStatus, error) {
+            alert('failed : ' + error);
+        });
 });
 </script>
 {% endblock %}
@@ -115,11 +123,7 @@ $(function() {
             <a href="{% url "blog:comment_new" post.pk %}"
                class="comment-form-btn btn btn-primary btn-block">댓글쓰기</a>
 
-            <div id="comment-list">
-                {% for comment in post.comment_set.all %}
-                    {% include "blog/_comment.html" %}
-                {% endfor %}
-            </div>
+            <div id="comment-list"></div>
 
             <hr/>
 
