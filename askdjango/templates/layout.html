@@ -23,6 +23,15 @@
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="{% url "blog:index" %}">Blog</a></li>
                     </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if not user.is_authenticated %}
+                            <li><a href="{% url "login" %}">로그인</a></li>
+                            <li><a href="{% url "signup" %}">회원가입</a></li>
+                        {% else %}
+                            <li><a href="{% url "profile" %}">프로필</a></li>
+                            <li><a href="" class="">로그아웃</a></li>
+                        {% endif %}
+                    </ul>
                 </div><!--/.nav-collapse -->
             </div>
         </nav>
