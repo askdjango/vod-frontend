@@ -1,6 +1,6 @@
 {% load thumbnail %}
 
-<div id="comment-{{ comment.pk }}" class="media">
+<div id="comment-{{ comment.pk }}" class="media comment" data-comment-id="{{ comment.pk }}">
     {% if comment.photo %}
         <div class="media-left">
             <a href="#">

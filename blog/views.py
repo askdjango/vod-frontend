@@ -59,6 +59,10 @@ class CommentListView(ListView):
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(post__id=self.kwargs['post_pk'])
+
+        latest_comment_id = self.request.GET.get('latest_comment_id', None)
+        if latest_comment_id:
+            qs = qs.filter(id__gt=latest_comment_id)
         return qs
 
 

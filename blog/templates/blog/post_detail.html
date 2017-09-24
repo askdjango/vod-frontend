@@ -99,6 +99,20 @@ $(function() {
         }
     });
 
+    $('#check-comment').click(function(e) {
+        e.preventDefault();
+
+        var comment_id = $('#comment-list .comment:first').data('comment-id');
+
+        $.get('{% url "blog:comment_list" post.pk %}', {latest_comment_id: comment_id})
+            .done(function(html) {
+                $('#comment-list').prepend(html);
+            })
+            .fail(function() {
+                alert('failed : ' + error);
+            });
+    });
+
     $.get('{% url "blog:comment_list" post.pk %}')
         .done(function(html) {
             $('#comment-list').html(html);
@@ -122,6 +136,10 @@ $(function() {
 
             <a href="{% url "blog:comment_new" post.pk %}"
                class="comment-form-btn btn btn-primary btn-block">댓글쓰기</a>
+
+            <a id="check-comment" class="btn btn-primary btn-block">
+                새 댓글 체크
+            </a>
 
             <div id="comment-list"></div>
 
