@@ -55,6 +55,123 @@
 
         {% block extra_body %}
         {% endblock %}
+
+    <script>
+$(function() {
+    $(document).on('click', '.modal-form-btn', function(e) {
+        e.preventDefault();
+
+        var action_url = $(this).attr('href');
+        var target_id = $(this).data('target-id');
+
+        $.get(action_url)
+            .done(function(form_html) {
+                var $modal = $('#modal-form-modal');
+                $modal.find('.modal-body').html(form_html);
+                $form = $modal.find('.modal-body form');
+                $form.attr('action', action_url);
+
+                if ( target_id ) {
+                    $form.attr('data-target-id', target_id); // modal form에 data-target-id를 기록
+                }
+                else {
+                    $form.removeData('target-id'); // modal창이 뜰때마다 form태그가 새로이 지정되어서 불필요
+                }
+
+                $modal.on('shown.bs.modal', function(e) {
+                    $(this).find('textarea:first').focus();
+                });
+
+                $modal.modal();
+            })
+            .fail(function(xhr, textStatus, error) {
+                alert('failed : ' + error);
+            });
+    });
+
+    $(document).on('submit', '#modal-form-modal form', function(e) {
+        e.preventDefault();
+
+        var $form = $(this);
+        var $submit = $form.find('[type=submit]');
+
+        $submit.prop('disabled', true);
+
+        $form.ajaxSubmit({
+            success: function(response, statusText, xhr, $form) {
+                var html = response;
+
+                var $resp = $(html);
+                var target_id = $form.data('target-id');
+
+                console.log(html);
+
+                if ( $resp.find('.has-error').length > 0 ) {
+                    // validation 에러일 경우, 에러 HTML 응답
+                    // form 태그의 속성정보는 그대로 유지하고, 필드 HTML 만 변경
+                    var fields_html = $resp.html();
+                    $('#modal-form-modal .modal-body form').html(fields_html);
+                }
+                else {
+                    if ( target_id ) {
+                        $('#' + target_id).html($resp.html());
+                    }
+                    else {
+                        $resp.prependTo('#comment-list');
+                    }
+
+                    $('#modal-form-modal').modal('hide');
+                    $form[0].reset();
+                }
+            },
+            error: function(xhr, textStatus, error) {
+                alert('failed : ' + error);
+            },
+            complete: function(xhr, textStatus) {
+            }
+        });
+    });
+
+    $(document).on('click', '.ajax-post-confirm', function(e) {
+        e.preventDefault();
+
+        var url = $(this).attr('href');
+        var target_id = $(this).data('target-id');
+        var message = $(this).data('message');
+
+        if ( confirm(message) ) {
+            $.post(url)
+                .done(function() {
+                    $('#' + target_id).remove();
+                })
+                .fail(function(xhr, textStatus, error) {
+                    alert('failed : ' + error);
+                });
+        }
+    });
+
+});
+    </script>
+
+    <div class="modal fade" id="modal-form-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Comment Form</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...<br/>
+                    ...<br/>
+                    ...<br/>
+                    ...<br/>
+                </div>
+            </div>
+        </div>
+    </div>
+
     </body>
 </html>
 
