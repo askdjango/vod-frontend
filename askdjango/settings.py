@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap3',
+    'chartjs',
     'easy_thumbnails',
     'rest_framework',
     'accounts',
