@@ -4,42 +4,26 @@
 <head>
     <meta charset="utf-8" />
     <script src="http://www.chartjs.org/dist/2.7.0/Chart.bundle.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 </head>
 <body>
-    <h1>{{ comic.title }} 평점</h1>
 
 <canvas id="canvas"></canvas>
 
 <script>
-var chartData = {
-    labels: [
-        {% for ep in comic.ep_list %}
-            '{{ ep.title }}'
-            {% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ],
-    datasets: [{
-        label: '평점',
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-        borderColor: "rgba(255, 99, 132, 1)",
-        pointBackgroundColor: "rgba(255, 99, 132, 1)",
-        pointBorderColor: "#fff",
-        data: [
-            {% for ep in comic.ep_list %}
-                {{ ep.rating }}
-                {% if not forloop.last %},{% endif %}
-            {% endfor %}
-        ]
-    }]
-};
-
-window.onload = function() {
-    var ctx = document.getElementById('canvas').getContext('2d');
-    window.chart = new Chart(ctx, {
-        type: 'line',
-        data: chartData
-    });
-};
+$(function() {
+    $.get('{% url "data_json" %}')
+        .done(function(chartData) {
+            var ctx = document.getElementById('canvas').getContext('2d');
+            window.chart = new Chart(ctx, {
+                type: 'line',
+                data: chartData
+            });
+        })
+        .fail(function(xhr, textStatus, error) {
+            alert('failed : ' + error);
+        });
+});
 </script>
 
 </body>
